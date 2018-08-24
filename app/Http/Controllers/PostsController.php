@@ -123,6 +123,34 @@ class PostsController extends Controller
     }
 
     /**
+     * @param $code
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
+     */
+    public function myGet($code)
+    {
+
+        if(!isset($code))
+        {
+            return response()->json([
+                'data' => null,
+                'message' => "Código de usuário obrigatório!",
+                'error' => true
+            ]);
+        }
+
+        $post = $this->repository->findWhere(["code"    => $code]);
+
+        if (request()->wantsJson()) {
+
+            return response()->json([
+                'data' => $post,
+                'error' => false
+            ]);
+        }
+
+        return view('posts.show', compact('post'));
+    }
+    /**
      * Show the form for editing the specified resource.
      *
      * @param  int $id
