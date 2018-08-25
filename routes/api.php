@@ -17,7 +17,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::group(['middleware'  =>  'cors'], function () {
-    Route::resource('posts', PostsController::class);
-    Route::get('myGet/{code}', 'PostsController@myGet');
+Route::group(['middleware'  =>  'cors', 'prefix'=>'posts'], function () {
+    Route::get('getAllWithCode/{code?}', 'PostsController@getAllWithCode');
+    Route::get('showWithCode/{code?}/{id?}', 'PostsController@showWithCode');
+    Route::post('store', 'PostsController@store');
+    Route::put('update/{id}', 'PostsController@update');
+    Route::delete('destroy/{id?}', 'PostsController@destroy');
 });

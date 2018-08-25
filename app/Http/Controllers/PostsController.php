@@ -62,6 +62,35 @@ class PostsController extends Controller
     }
 
     /**
+     * @param $code
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
+     */
+    public function getAllWithCode($code = null)
+    {
+
+        if(!isset($code))
+        {
+            return response()->json([
+                'data' => null,
+                'message' => "Código de usuário obrigatório!",
+                'error' => true
+            ]);
+        }
+
+        $post = $this->repository->findWhere(["code"    => $code]);
+
+        if (request()->wantsJson()) {
+
+            return response()->json([
+                'data' => $post,
+                'error' => false
+            ]);
+        }
+
+        return view('posts.show', compact('post'));
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  PostCreateRequest $request
@@ -81,6 +110,7 @@ class PostsController extends Controller
             $response = [
                 'message' => 'Post created.',
                 'data'    => $post->toArray(),
+                'error'   => false,
             ];
 
             if ($request->wantsJson()) {
@@ -123,22 +153,26 @@ class PostsController extends Controller
     }
 
     /**
-     * @param $code
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
+     * Display the specified resource.
+     *
+     * @param  int $code
+     * @param  int $id
+     *
+     * @return \Illuminate\Http\Response
      */
-    public function myGet($code)
+    public function showWithCode($code = null, $id = null)
     {
 
-        if(!isset($code))
+        if(!isset($code) || !isset($id))
         {
             return response()->json([
                 'data' => null,
-                'message' => "Código de usuário obrigatório!",
+                'message' => "Código de usuário e ID do post obrigatório!",
                 'error' => true
             ]);
         }
 
-        $post = $this->repository->findWhere(["code"    => $code]);
+        $post = $this->repository->findWhere(['id' => $id, 'code' => $code]);
 
         if (request()->wantsJson()) {
 
@@ -150,6 +184,7 @@ class PostsController extends Controller
 
         return view('posts.show', compact('post'));
     }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -185,6 +220,7 @@ class PostsController extends Controller
             $response = [
                 'message' => 'Post updated.',
                 'data'    => $post->toArray(),
+                'error'   => false
             ];
 
             if ($request->wantsJson()) {
@@ -207,7 +243,6 @@ class PostsController extends Controller
         }
     }
 
-
     /**
      * Remove the specified resource from storage.
      *
@@ -215,8 +250,18 @@ class PostsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id = null)
     {
+
+        if(!isset($id))
+        {
+            return response()->json([
+                'data' => null,
+                'message' => "ID do post obrigatório!",
+                'error' => true
+            ]);
+        }
+
         $deleted = $this->repository->delete($id);
 
         if (request()->wantsJson()) {
@@ -224,6 +269,7 @@ class PostsController extends Controller
             return response()->json([
                 'message' => 'Post deleted.',
                 'deleted' => $deleted,
+                'error' => false
             ]);
         }
 
