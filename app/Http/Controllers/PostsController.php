@@ -77,7 +77,7 @@ class PostsController extends Controller
             ]);
         }
 
-        $post = $this->repository->findWhere(["code"    => $code])->orderBy('created_at', 'DESC');
+        $post = $this->repository->orderBy('created_at', 'desc')->findWhere(["code"    => $code]);
 
         if (request()->wantsJson()) {
 
